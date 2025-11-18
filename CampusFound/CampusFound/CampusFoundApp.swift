@@ -6,27 +6,17 @@
 //
 
 import SwiftUI
-import SwiftData
 
 @main
 struct CampusFoundApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
+    @StateObject private var session = SessionViewModel()
+    @StateObject private var itemsVM = ItemsViewModel()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(session)
+                .environmentObject(itemsVM)
         }
-        .modelContainer(sharedModelContainer)
     }
 }

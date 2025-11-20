@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import CoreLocation
 import Combine
+import CoreLocation
 
 class ItemsViewModel: ObservableObject {
     @Published var items: [LostFoundItem] = []

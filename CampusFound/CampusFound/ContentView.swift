@@ -4,8 +4,6 @@
 //
 //  Created by Adrian Ninanya on 11/17/25.
 //
-import SwiftData
-
 import SwiftUI
 
 struct ContentView: View {

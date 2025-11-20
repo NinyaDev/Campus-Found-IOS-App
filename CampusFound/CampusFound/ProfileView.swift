@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct ProfileView: View {
     @EnvironmentObject var session: SessionViewModel
 

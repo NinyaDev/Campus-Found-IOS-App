@@ -6,6 +6,8 @@
 //
 import SwiftUI
 
+import SwiftUI
+
 struct NewPostView: View {
     @EnvironmentObject var itemsVM: ItemsViewModel
     @EnvironmentObject var session: SessionViewModel
@@ -84,6 +86,3 @@ struct NewPostView: View {
         status = .lost
     }
 }
-
-
-

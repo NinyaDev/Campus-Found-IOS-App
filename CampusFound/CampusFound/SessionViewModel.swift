@@ -5,8 +5,8 @@
 //  Created by Adrian Ninanya on 11/17/25.
 //
 
-import Foundation
 import Combine
+import Foundation
 
 class SessionViewModel: ObservableObject {
     @Published var isLoggedIn = false
@@ -32,4 +32,3 @@ class SessionViewModel: ObservableObject {
         errorMessage = nil
     }
 }
-

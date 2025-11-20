@@ -6,6 +6,8 @@
 //
 import SwiftUI
 
+import SwiftUI
+
 struct ItemDetailView: View {
     let item: LostFoundItem
     @EnvironmentObject var itemsVM: ItemsViewModel

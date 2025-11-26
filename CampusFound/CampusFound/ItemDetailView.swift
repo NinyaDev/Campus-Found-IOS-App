@@ -1,11 +1,3 @@
-//
-//  ItemDetailView.swift
-//  CampusFound
-//
-//  Created by Adrian Ninanya on 11/17/25.
-//
-import SwiftUI
-
 import SwiftUI
 
 struct ItemDetailView: View {
@@ -18,13 +10,36 @@ struct ItemDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
 
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(.secondarySystemBackground))
-                    .frame(height: 200)
-                    .overlay(
-                        Image(systemName: "photo.on.rectangle.angled")
-                            .font(.largeTitle)
-                    )
+                // PHOTO AREA
+                ZStack {
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color(.secondarySystemBackground))
+                        .frame(height: 220)
+
+                    if let urlString = item.imageURL,
+                       let url = URL(string: urlString) {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .empty:
+                                ProgressView()
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(height: 220)
+                                    .clipped()
+                                    .cornerRadius(16)
+                            case .failure:
+                                placeholderImage
+                            @unknown default:
+                                placeholderImage
+                            }
+                        }
+                        .frame(height: 220)
+                    } else {
+                        placeholderImage
+                    }
+                }
 
                 Text(item.title)
                     .font(.title)
@@ -44,8 +59,26 @@ struct ItemDetailView: View {
                         .foregroundColor(.secondary)
                 }
 
-                Text("Location: \(item.building)")
-                    .font(.subheadline)
+                // LOCATION SECTION
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Location")
+                        .font(.headline)
+
+                    Text(item.building)
+                        .font(.subheadline)
+
+                    if let loc = item.location {
+                        Text("Shared exact location:")
+                            .font(.subheadline)
+                        Text("Lat \(loc.latitude, specifier: "%.5f"), Lng \(loc.longitude, specifier: "%.5f")")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("No precise location shared")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
 
                 Divider()
 
@@ -83,41 +116,10 @@ struct ItemDetailView: View {
             MessageSheetView(item: item)
         }
     }
-}
 
-struct MessageSheetView: View {
-    let item: LostFoundItem
-    @State private var messageText: String = ""
-
-    var body: some View {
-        NavigationStack {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Send a message to the person who posted this item. Include details to verify that it's yours.")
-                    .font(.subheadline)
-
-                TextEditor(text: $messageText)
-                    .frame(minHeight: 150)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray.opacity(0.3))
-                    )
-
-                Spacer()
-
-                Button {
-                    print("Message sent: \(messageText)")
-                } label: {
-                    Text("Send")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.red)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                }
-            }
-            .padding()
-            .navigationTitle("Message")
-        }
+    private var placeholderImage: some View {
+        Image(systemName: "photo.on.rectangle.angled")
+            .font(.largeTitle)
+            .foregroundColor(.secondary)
     }
 }
-

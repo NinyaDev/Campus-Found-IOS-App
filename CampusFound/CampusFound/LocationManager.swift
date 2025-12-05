@@ -1,5 +1,6 @@
 import Foundation
 import CoreLocation
+import Combine
 
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let manager = CLLocationManager()
@@ -12,51 +13,72 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     override init() {
         super.init()
         manager.delegate = self
+        manager.desiredAccuracy = kCLLocationAccuracyBest
     }
     
-    func requestPermissionIfNeeded() {
+    // Call this when user toggles "Share my current location"
+    func requestLocationOnce() {
         let current = manager.authorizationStatus
-        status = current
+        print("requestLocationOnce - current status: \(current.rawValue)")
         
         switch current {
         case .notDetermined:
+            // First time → show system popup
+            isRequesting = true
             manager.requestWhenInUseAuthorization()
-        case .denied, .restricted:
-            errorMessage = "Location access is denied. You can enable it in Settings."
+            
         case .authorizedWhenInUse, .authorizedAlways:
-            break
+            // Already authorized → just request location
+            isRequesting = true
+            errorMessage = nil
+            manager.requestLocation()
+            
+        case .denied, .restricted:
+            // User has denied before or location is restricted
+            isRequesting = false
+            errorMessage = "Location access is denied. You can enable it in Settings."
+            
         @unknown default:
-            break
+            isRequesting = false
         }
     }
     
-    func requestLocationOnce() {
-        isRequesting = true
-        requestPermissionIfNeeded()
-        
-        let current = manager.authorizationStatus
-        if current == .authorizedWhenInUse || current == .authorizedAlways {
-            manager.requestLocation()
-        }
-    }
-    
+    // Called when user responds to the permission popup
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        self.status = status
-        
-        if status == .authorizedWhenInUse || status == .authorizedAlways {
-            manager.requestLocation()
+        DispatchQueue.main.async {
+            self.status = status
+            print("didChangeAuthorization: \(status.rawValue)")
+            
+            switch status {
+            case .authorizedWhenInUse, .authorizedAlways:
+                if self.isRequesting {
+                    manager.requestLocation()
+                }
+            case .denied, .restricted:
+                self.isRequesting = false
+                self.errorMessage = "Location access is denied. You can enable it in Settings."
+            case .notDetermined:
+                break
+            @unknown default:
+                break
+            }
         }
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        isRequesting = false
-        lastLocation = locations.last
-        errorMessage = nil
+        DispatchQueue.main.async {
+            self.isRequesting = false
+            self.lastLocation = locations.last
+            self.errorMessage = nil
+            print("didUpdateLocations: \(String(describing: self.lastLocation))")
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        isRequesting = false
-        errorMessage = "Could not get location."
-        print("Location error:", error)
+        DispatchQueue.main.async {
+            self.isRequesting = false
+            self.errorMessage = "Could not get location."
+            print("Location error: \(error)")
+        }
     }
 }

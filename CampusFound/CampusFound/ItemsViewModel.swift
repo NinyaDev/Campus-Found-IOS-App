@@ -37,6 +37,7 @@ class ItemsViewModel: ObservableObject {
              status: ItemStatus,
              ownerEmail: String,
              imageURL: String? = nil,
+             imageData: Data?,
              location: CLLocationCoordinate2D? = nil) {
     let newItem = LostFoundItem(
         id: UUID().uuidString,
@@ -47,7 +48,8 @@ class ItemsViewModel: ObservableObject {
         date: Date(),
         imageURL: imageURL,
         ownerEmail: ownerEmail,
-        location: location
+        location: location,
+        imageData: imageData
     )
     items.append(newItem)
 }

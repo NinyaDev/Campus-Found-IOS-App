@@ -26,4 +26,5 @@ struct LostFoundItem: Identifiable {
     var imageURL: String?
     var ownerEmail: String
     var location: CLLocationCoordinate2D?
+    var imageData: Data?
 }

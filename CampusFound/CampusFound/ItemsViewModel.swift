@@ -1,10 +1,3 @@
-//
-//  ItemsViewModel.swift
-//  CampusFound
-//
-//  Created by Adrian Ninanya on 11/17/25.
-//
-
 import Foundation
 import Combine
 import CoreLocation
@@ -37,24 +30,28 @@ class ItemsViewModel: ObservableObject {
         .sorted(by: { $0.date > $1.date })
     }
 
+    /// Now accepts optional imageURL and optional precise location
     func addItem(title: String,
-                 description: String,
-                 building: String,
-                 status: ItemStatus,
-                 ownerEmail: String) {
-        let newItem = LostFoundItem(
-            id: UUID().uuidString,
-            title: title,
-            description: description,
-            building: building,
-            status: status,
-            date: Date(),
-            imageURL: nil,
-            ownerEmail: ownerEmail,
-            location: nil
-        )
-        items.append(newItem)
-    }
+             description: String,
+             building: String,
+             status: ItemStatus,
+             ownerEmail: String,
+             imageURL: String? = nil,
+             location: CLLocationCoordinate2D? = nil) {
+    let newItem = LostFoundItem(
+        id: UUID().uuidString,
+        title: title,
+        description: description,
+        building: building,
+        status: status,
+        date: Date(),
+        imageURL: imageURL,
+        ownerEmail: ownerEmail,
+        location: location
+    )
+    items.append(newItem)
+}
+
 
     func markReturned(_ item: LostFoundItem) {
         if let index = items.firstIndex(where: { $0.id == item.id }) {

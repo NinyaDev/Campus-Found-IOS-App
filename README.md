@@ -76,7 +76,7 @@ The project follows the **MVVM (Model-View-ViewModel)** architectural pattern:
 
 **Adrian Ninanya**
 
-* **GitHub**: [AdrianNinanya32](https://github.com/AdrianNinanya32)
+* **GitHub**: [AdrianNinanya32](https://github.com/NinyaDev)
 * **Linkedin**: [Adrian Ninanya](https://www.linkedin.com/in/adrian-ninanya/)
 
 **Andres Eguez**
